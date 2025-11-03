@@ -1,0 +1,15 @@
+{
+  "name": "wit-dom-shim",
+  "version": "0.1.0",
+  "description": "WIT DOM shim (polyfill) + js-wit-bindgen minimal POC",
+  "main": "src/shim/index.js",
+  "scripts": {
+    "test": "node tests/run-smoke.js",
+    "start": "node examples/web/loader.js"
+  },
+  "devDependencies": {
+    "jsdom": "^21.1.0",
+    "webassemblyjs": "^1.11.0"
+  },
+  "license": "MIT"
+}
