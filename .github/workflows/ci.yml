@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install Rust
+        uses: dtolnay/rssetup@v1
+        with:
+          rust: stable
+      - name: Add wasm target
+        run: rustup target add wasm32-unknown-unknown
+      - name: Build Rust example
+        working-directory: examples/rust
+        run: cargo build --release --target wasm32-unknown-unknown
+      - name: Run JS smoke test
+        run: |
+          npm ci
+          node tests/run-smoke.js
