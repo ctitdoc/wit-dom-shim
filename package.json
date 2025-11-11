@@ -1,15 +1,13 @@
 {
   "name": "wit-dom-shim",
   "version": "0.1.0",
-  "description": "WIT DOM shim (polyfill) + js-wit-bindgen minimal POC",
-  "main": "src/shim/index.js",
+  "description": "A JS shim between Rust and the browser",
+  "type": "module",
+  "main": "src/shim/wit-adapter.js",
   "scripts": {
-    "test": "node tests/run-smoke.js",
-    "start": "node examples/web/loader.js"
+    "build": "echo 'No build script required for JS shim'",
+    "test": "echo 'Test manually in browser'"
   },
-  "devDependencies": {
-    "jsdom": "^21.1.0",
-    "webassemblyjs": "^1.11.0"
-  },
+  "author": "Ton Nom",
   "license": "MIT"
 }

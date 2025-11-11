@@ -105,15 +105,3 @@ export async function instantiateWasm(bytesOrUrl) {
 
   return instance;
 }
-
-// node_add_event_listener dans wit-adapter.js
-export function node_add_event_listener(nodeHandle, eventNamePtr, eventNameLen, callbackPtr, instance) {
-  const node = getNodeFromHandle(nodeHandle);
-  const eventName = decodeString(eventNamePtr, eventNameLen);
-
-  node.addEventListener(eventName, () => {
-    if (instance && instance.exports && instance.exports.on_click) {
-      instance.exports.on_click(); // appel du callback Rust
-    }
-  });
-}

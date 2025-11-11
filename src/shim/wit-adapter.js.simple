@@ -1,0 +1,45 @@
+/**
+ * src/shim/wit-adapter.js
+ * ES Module version for browser
+ * Provides instantiateWasm function that maps WIT imports to DOM
+ */
+
+export async function instantiateWasm(bytesOrUrl) {
+  let wasmBytes;
+
+  if (typeof bytesOrUrl === "string") {
+    // fetch from URL
+    const resp = await fetch(bytesOrUrl);
+    wasmBytes = await resp.arrayBuffer();
+  } else if (bytesOrUrl instanceof ArrayBuffer) {
+    wasmBytes = bytesOrUrl;
+  } else {
+    throw new Error("Invalid argument, expected URL string or ArrayBuffer");
+  }
+
+  // Minimal WIT DOM shim imports
+  const imports = {
+    env: {
+      document_create_element: (tagPtr) => {
+        // TODO: implement string decoding if tagPtr is a pointer
+        return document.createElement("div"); // placeholder
+      },
+      document_get_element_by_id: (idPtr) => {
+        return document.getElementById("root"); // placeholder
+      },
+      node_append_child: (parent, child) => {
+        try {
+          parent.appendChild(child);
+        } catch {
+          console.warn("append_child failed");
+        }
+      },
+      console_log: (ptr) => {
+        console.log("WASM log placeholder");
+      },
+    }
+  };
+
+  const { instance } = await WebAssembly.instantiate(wasmBytes, imports);
+  return instance;
+}

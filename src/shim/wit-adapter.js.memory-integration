@@ -1,6 +1,6 @@
 /**
  * src/shim/wit-adapter.js
- * Full WIT DOM shim for browser with handle mapping and string decoding
+ * Full WIT DOM shim for browser with handle mapping
  */
 
 export async function instantiateWasm(bytesOrUrl) {
@@ -29,20 +29,32 @@ export async function instantiateWasm(bytesOrUrl) {
     return nodes.get(handle);
   }
 
+  function readString(ptr, len) {
+    const bytes = new Uint8Array(memory.buffer, ptr, len);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+
   const imports = {
     env: {
-      // Temporary placeholders for memory; will be set after instantiation
-      memory: null,
-
+      // DOM
+/*
+      document_create_element: (tagPtr) => {
+        // TODO: decode tagPtr string from WASM memory
+        const el = document.createElement("div");
+        return storeNode(el);
+      },
+*/
       document_create_element: (ptr, len) => {
         const tag = readString(ptr, len);
         const el = document.createElement(tag);
         return storeNode(el);
       },
 
-      document_get_element_by_id: (ptr, len) => {
-        const id = readString(ptr, len);
-        const el = document.getElementById(id) || document.createElement("div");
+
+      document_get_element_by_id: (idPtr) => {
+        // TODO: decode idPtr string from WASM memory
+        const el = document.getElementById("root");
         return storeNode(el);
       },
 
@@ -51,9 +63,19 @@ export async function instantiateWasm(bytesOrUrl) {
       node_append_child: (parentHandle, childHandle) => {
         const parent = getNode(parentHandle);
         const child = getNode(childHandle);
-        if (parent && child) parent.appendChild(child);
-        else console.warn("node_append_child failed: invalid handle");
+        if (parent && child) {
+          parent.appendChild(child);
+        } else {
+          console.warn("node_append_child failed: invalid handle");
+        }
       },
+
+/*
+      node_set_text: (nodeHandle, textPtr) => {
+        const node = getNode(nodeHandle);
+        if (node) node.textContent = "WASM placeholder text"; // TODO: decode textPtr
+      },
+*/
 
       node_set_text: (nodeHandle, ptr, len) => {
         const node = getNode(nodeHandle);
@@ -63,29 +85,23 @@ export async function instantiateWasm(bytesOrUrl) {
         }
       },
 
-      node_set_attribute: (nodeHandle, namePtr, nameLen, valuePtr, valueLen) => {
+      node_set_attribute: (nodeHandle, namePtr, valuePtr) => {
         const node = getNode(nodeHandle);
-        if (node) {
-          const name = readString(namePtr, nameLen);
-          const value = readString(valuePtr, valueLen);
-          node.setAttribute(name, value);
-        }
+        if (node) node.setAttribute("data-placeholder", "true"); // TODO: decode namePtr/valuePtr
       },
 
-      node_add_event_listener: (nodeHandle, eventPtr, eventLen, callbackPtr) => {
+      node_add_event_listener: (nodeHandle, eventPtr, callbackPtr) => {
         const node = getNode(nodeHandle);
         if (node) {
-          const event = readString(eventPtr, eventLen);
           // TODO: map callbackPtr to WASM function
-          console.log(`node_add_event_listener called for event ${event}`);
+          console.log("node_add_event_listener called on", node);
         }
       },
 
-      console_log: (ptr, len) => {
-        const msg = readString(ptr, len);
-        console.log("WASM log:", msg);
-      },
+      // Console logging
+      console_log: (ptr) => console.log("WASM log placeholder"),
 
+      // Resource management
       drop_resource_node: (handle) => nodes.delete(handle),
       drop_resource_element: (handle) => nodes.delete(handle),
       drop_resource_document: (handle) => nodes.delete(handle),
@@ -93,27 +109,6 @@ export async function instantiateWasm(bytesOrUrl) {
   };
 
   const { instance } = await WebAssembly.instantiate(wasmBytes, imports);
-
-  // Set memory reference for string decoding
   const memory = instance.exports.memory;
-  imports.env.memory = memory;
-
-  function readString(ptr, len) {
-    const bytes = new Uint8Array(memory.buffer, ptr, len);
-    return new TextDecoder("utf-8").decode(bytes);
-  }
-
   return instance;
-}
-
-// node_add_event_listener dans wit-adapter.js
-export function node_add_event_listener(nodeHandle, eventNamePtr, eventNameLen, callbackPtr, instance) {
-  const node = getNodeFromHandle(nodeHandle);
-  const eventName = decodeString(eventNamePtr, eventNameLen);
-
-  node.addEventListener(eventName, () => {
-    if (instance && instance.exports && instance.exports.on_click) {
-      instance.exports.on_click(); // appel du callback Rust
-    }
-  });
 }

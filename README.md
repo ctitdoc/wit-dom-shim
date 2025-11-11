@@ -12,7 +12,7 @@ This repository contains:
 
 ```bash
 # install deps
-npm ci
+npm install
 # build rust example locally (requires rust toolchain)
 cd examples/rust
 rustup target add wasm32-unknown-unknown

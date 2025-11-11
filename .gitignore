@@ -4,3 +4,9 @@ target/
 dist/
 *.wasm
 .env
+
+
+# Added by cargo
+.idea/
+/target
+/Cargo.lock
