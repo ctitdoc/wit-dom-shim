@@ -29,4 +29,4 @@ No glue between JS and Rust/Wasm (more info about [the glue issue](https://hacks
 
 Click the "Click me!" button => it calls Rust code that creates the "Button clicked! Hello from Rust WIT shim!", that appears below the button.
 
-With such a shim approach, Rust/Wasm frontend frameworks can test/start their support of the WIT standards wihtout having to wait for the browsers to support them: think of it as a WIT polyfill enabling WIT based front end application to run in browsers not supporting WIT yet.
+With such a shim approach, Rust/Wasm frontend frameworks can test/start their support of the WIT standard wihtout having to wait for the browsers to support them: think of it as a WIT polyfill enabling WIT based front end application to run in browsers not supporting WIT yet.
