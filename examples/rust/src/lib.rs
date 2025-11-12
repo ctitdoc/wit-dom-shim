@@ -74,7 +74,7 @@ pub extern "C" fn run_demo() {
     unsafe {
         node_set_text(span, as_ptr_len(" - span text inside paragraph").0, as_ptr_len(" - span text inside paragraph").1);
         node_set_attribute(span, as_ptr_len("style").0, as_ptr_len("style").1, as_ptr_len("color: #d14; font-weight: bold;").0, as_ptr_len("color: #d14; font-weight: bold;").1);
-        let last_p = unsafe { document_create_element(as_ptr_len("p").0, as_ptr_len("p").1) };
+        let last_p =  document_create_element(as_ptr_len("p").0, as_ptr_len("p").1) ;
         node_append_child(last_p, span);
         node_append_child(section, last_p);
     }
