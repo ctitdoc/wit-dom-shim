@@ -25,7 +25,7 @@ Go to [the demo page](http://www.sitems.org:16386/wit-dom-shim/).
 
 All the elements of this page are created by Rust code via the shim.
 
-No glue between JS and Rust/Wasm (more info about [the glue issue](https://hacks.mozilla.org/2019/08/webassembly-interface-types/?utm_source=chatgpt.com)): no marshalling/unmarshaling of the DOM elements between both languages : the shim manages the delegation of the DOM manipulations from the Rust code to the browser via a JS implementation of the [WIT](https://component-model.bytecodealliance.org/design/wit.html?utm_source=chatgpt.com) handle/resource concept.
+No glue between JS and Rust/Wasm (more info about [the glue issue](https://hacks.mozilla.org/2019/08/webassembly-interface-types/?utm_source=chatgpt.com)): no marshalling/unmarshaling of the DOM elements between both languages : the shim manages the delegation of the DOM manipulations from the Rust code to the browser via a JS implementation of the [WIT](https://component-model.bytecodealliance.org/design/wit.html?utm_source=chatgpt.com) handle/resource concept (the shim).
 
 Click the "Click me!" button => it calls Rust code that creates the "Button clicked! Hello from Rust WIT shim!", that appears below the button.
 
